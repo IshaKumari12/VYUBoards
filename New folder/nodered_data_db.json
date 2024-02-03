@@ -1,0 +1,135 @@
+[
+    {
+        "id": "c4b36ae5608ed39e",
+        "type": "http request",
+        "z": "b900bd1b88a836aa",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://192.168.0.140/cgi-bin/operator/operator.cgi?action=get.lpr.log&plate_type=0&time_start=2023-12-06+00:00:00&time_end=2023-12-06+23:59:59",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": false,
+        "headers": [],
+        "x": 130,
+        "y": 280,
+        "wires": [
+            [
+                "d1f5723410742007"
+            ]
+        ]
+    },
+    {
+        "id": "68b91e4be57a37cf",
+        "type": "inject",
+        "z": "b900bd1b88a836aa",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "abc",
+        "payload": "",
+        "payloadType": "date",
+        "x": 160,
+        "y": 140,
+        "wires": [
+            [
+                "c4b36ae5608ed39e"
+            ]
+        ]
+    },
+    {
+        "id": "571f3cdab3b2bf8d",
+        "type": "debug",
+        "z": "b900bd1b88a836aa",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 860,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "4b8941cda90335a5",
+        "type": "mysql",
+        "z": "b900bd1b88a836aa",
+        "mydb": "2f09c5ffd15b4af3",
+        "name": "Pavan DB",
+        "x": 720,
+        "y": 320,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "266ef442cbb18ce6",
+        "type": "function",
+        "z": "b900bd1b88a836aa",
+        "name": "function 2",
+        "func": "// Input data is available in the 'msg.payload'\nvar values = msg.payload;\n\n// Retrieve the MySQL query from the flow context\nvar query = flow.get('insertQuery');\n\n// Create the message object for the MySQL node\nmsg.topic = query;\nmsg.payload = [values];\n\n// Pass the message to the next node (MySQL node)\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 280,
+        "wires": [
+            [
+                "571f3cdab3b2bf8d",
+                "4b8941cda90335a5"
+            ]
+        ]
+    },
+    {
+        "id": "d1f5723410742007",
+        "type": "function",
+        "z": "b900bd1b88a836aa",
+        "name": "function 3",
+        "func": "// Input data is available in the 'msg.payload'\nvar input = msg.payload;\n\n// Parse the JSON data\nvar jsonData = JSON.parse(input);\n\n// Create an array of values for 'Plate' and 'Type'\nvar values = jsonData.data.map(function (entry) {\n    return [entry.plate, entry.type, entry.time, entry.speed, entry.direction];\n});\n\n// Filter out existing records from the values array\nvalues = values.filter(function (value) {\n    // Check if the plate already exists in the database\n    var existingPlate = global.get('existingPlates') || [];\n    if (!existingPlate.includes(value[0])) {\n        existingPlate.push(value[0]);\n        global.set('existingPlates', existingPlate);\n        return true;\n    }\n    return false;\n});\n\n// If there are new records to insert, proceed with the insertion\nif (values.length > 0) {\n    // Insert the data into the MySQL database\n    var query = \"INSERT INTO lprdata (plate, type, entrytime, speed, direction) VALUES ?\";\n    flow.set('insertQuery', query); // Save the query in the flow context\n\n    msg.payload = values;\n\n    // Pass the message to the next node (MySQL node)\n    return msg;\n} else {\n    // No new records to insert, stop the flow\n    return null;\n}\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 280,
+        "wires": [
+            [
+                "266ef442cbb18ce6"
+            ]
+        ]
+    },
+    {
+        "id": "2f09c5ffd15b4af3",
+        "type": "MySQLdatabase",
+        "name": "pavandb",
+        "host": "localhost",
+        "port": "3306",
+        "db": "pavandb",
+        "tz": "",
+        "charset": "UTF8"
+    }
+]

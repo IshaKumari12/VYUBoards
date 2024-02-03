@@ -1,0 +1,184 @@
+[
+    {
+        "id": "6bafc30e520faa4f",
+        "type": "http request",
+        "z": "b2a43b8c90611f3a",
+        "name": "Call API",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [
+            {
+                "keyType": "Content-Type",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            },
+            {
+                "keyType": "Authorization",
+                "keyValue": "",
+                "valueType": "other",
+                "valueValue": "Bearer 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"
+            }
+        ],
+        "x": 520,
+        "y": 240,
+        "wires": [
+            [
+                "d4520dbe63cbd3da"
+            ]
+        ]
+    },
+    {
+        "id": "16452808be8cc81d",
+        "type": "inject",
+        "z": "b2a43b8c90611f3a",
+        "name": "Question",
+        "props": [
+            {
+                "p": "question",
+                "v": "what is todays plate count",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 120,
+        "y": 240,
+        "wires": [
+            [
+                "6d399aa8bac4cf7b"
+            ]
+        ]
+    },
+    {
+        "id": "6d399aa8bac4cf7b",
+        "type": "function",
+        "z": "b2a43b8c90611f3a",
+        "name": "format payload",
+        "func": "msg.payload = {\n    \"model\": \"gpt-3.5-turbo\",\n    \"messages\": [{ \"role\": \"user\", \"content\": msg.question + \"in sqldatabase i have lprdata table with plate column having number plate details, type column having 2 or 3 where 2 means employee and 3 means visitor, entrytime column which is timestamp, speed column having speed of vehicle, direction column having 0 or 2 where 2 means forward direction 0 means reverse direction.Give me SQL query to achieve this.\" }],\n    \"temperature\": 0.8\n}\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 240,
+        "wires": [
+            [
+                "6bafc30e520faa4f"
+            ]
+        ]
+    },
+    {
+        "id": "d4520dbe63cbd3da",
+        "type": "function",
+        "z": "b2a43b8c90611f3a",
+        "name": "function 6",
+        "func": "// Assuming msg.payload contains the GPT-3.5 Turbo response\nconst gptResponse = msg.payload;\n\n// Check if the response has choices and is not empty\nif (gptResponse && gptResponse.choices && gptResponse.choices.length > 0) {\n    // Extract the content from the first choice\n    const content = gptResponse.choices[0].message.content;\n\n    // Set the content as the new payload\n    msg.payload = content;\n} else {\n    // Handle the case where the response is not as expected\n    msg.payload = \"Error: Invalid GPT-3.5 Turbo response\";\n}\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 120,
+        "y": 460,
+        "wires": [
+            [
+                "a239e0fb6fb63e8d"
+            ]
+        ]
+    },
+    {
+        "id": "a239e0fb6fb63e8d",
+        "type": "function",
+        "z": "b2a43b8c90611f3a",
+        "name": "function 7",
+        "func": "var inputText = msg.payload; // Assuming the output text is in msg.payload\nvar regex = /```sql([\\s\\S]+?)```/; // Regular expression to match SQL code inside ``` ```\n\nvar match = inputText.match(regex);\n\nif (match && match[1]) {\n    var sqlQuery = match[1].trim();\n    msg.payload = sqlQuery;\n    return msg;\n} else {\n    // Handle the case where no SQL query is found\n    return null; // or handle accordingly\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 460,
+        "wires": [
+            [
+                "ad7599a020d374d2"
+            ]
+        ]
+    },
+    {
+        "id": "ad7599a020d374d2",
+        "type": "function",
+        "z": "b2a43b8c90611f3a",
+        "name": "function 8",
+        "func": "msg.topic = msg.payload;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 460,
+        "wires": [
+            [
+                "9fc9eff50cf85260"
+            ]
+        ]
+    },
+    {
+        "id": "9fc9eff50cf85260",
+        "type": "mysql",
+        "z": "b2a43b8c90611f3a",
+        "mydb": "2f09c5ffd15b4af3",
+        "name": "",
+        "x": 680,
+        "y": 460,
+        "wires": [
+            [
+                "06b379eed6fe14e2"
+            ]
+        ]
+    },
+    {
+        "id": "06b379eed6fe14e2",
+        "type": "debug",
+        "z": "b2a43b8c90611f3a",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 860,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "2f09c5ffd15b4af3",
+        "type": "MySQLdatabase",
+        "name": "pavandb",
+        "host": "localhost",
+        "port": "3306",
+        "db": "pavandb",
+        "tz": "",
+        "charset": "UTF8"
+    }
+]

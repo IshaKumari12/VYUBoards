@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>People Flow Chart</title>
+    <!-- Include Chart.js and Moment.js from CDNs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment"></script>
+    <!-- Include Chart.js Moment adapter -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment"></script>
+</head>
+<body>
+    <canvas id="peopleFlowChart" width="800" height="400"></canvas>
+
+    <script>
+        // Get the data from the server (replace this with your actual API endpoint)
+        fetch('/api/yesterday-data')
+            .then(response => response.json())
+            .then(data => {
+                // Create the chart
+                createChart(data);
+            })
+            .catch(error => console.error('Error fetching data:', error));
+
+        // Function to create the line chart
+        function createChart(data) {
+            const ctx = document.getElementById('peopleFlowChart').getContext('2d');
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.timestamps,
+                    datasets: [
+                        {
+                            label: 'Cumulative IN',
+                            borderColor: 'blue',
+                            data: data.cumulativeIN,
+                            fill: false,
+                            pointRadius: 3,
+                        },
+                        {
+                            label: 'Cumulative OUT',
+                            borderColor: 'red',
+                            data: data.cumulativeOUT,
+                            fill: false,
+                            pointRadius: 3,
+                        },
+                    ],
+                },
+                options: {
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'minute',
+                                tooltipFormat: 'YYYY-MM-DD HH:mm:ss',
+                            },
+                        },
+                        y: {
+                            beginAtZero: true,
+                        },
+                    },
+                },
+            });
+        }
+    </script>
+</body>
+</html>
