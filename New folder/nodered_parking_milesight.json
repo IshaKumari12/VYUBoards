@@ -1,0 +1,775 @@
+[
+    {
+        "id": "59edf4acb546d11c",
+        "type": "tab",
+        "label": "Flow 5",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "92a4eb47b36b0440",
+        "type": "http request",
+        "z": "59edf4acb546d11c",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://192.168.0.140/cgi-bin/operator/operator.cgi?action=get.lpr.log&plate_type=0&time_start=2023-12-06+00:00:00&time_end=2023-12-06+23:59:59",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": false,
+        "headers": [],
+        "x": 330,
+        "y": 100,
+        "wires": [
+            [
+                "469516fb40ce32f2"
+            ]
+        ]
+    },
+    {
+        "id": "273f69cbcf152689",
+        "type": "inject",
+        "z": "59edf4acb546d11c",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "abc",
+        "payload": "",
+        "payloadType": "date",
+        "x": 140,
+        "y": 100,
+        "wires": [
+            [
+                "92a4eb47b36b0440"
+            ]
+        ]
+    },
+    {
+        "id": "2426c9f1773179ab",
+        "type": "debug",
+        "z": "59edf4acb546d11c",
+        "name": "debug 4",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 560,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "adbf22355855f0f8",
+        "type": "mysql",
+        "z": "59edf4acb546d11c",
+        "mydb": "2f09c5ffd15b4af3",
+        "name": "Pavan DB",
+        "x": 540,
+        "y": 180,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "847879db2271c1f6",
+        "type": "function",
+        "z": "59edf4acb546d11c",
+        "name": "function 9",
+        "func": "// Input data is available in the 'msg.payload'\nvar values = msg.payload;\n\n// Retrieve the MySQL query from the flow context\nvar query = flow.get('insertQuery');\n\n// Create the message object for the MySQL node\nmsg.topic = query;\nmsg.payload = [values];\n\n// Pass the message to the next node (MySQL node)\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 180,
+        "wires": [
+            [
+                "2426c9f1773179ab",
+                "adbf22355855f0f8"
+            ]
+        ]
+    },
+    {
+        "id": "469516fb40ce32f2",
+        "type": "function",
+        "z": "59edf4acb546d11c",
+        "name": "function 10",
+        "func": "// Input data is available in the 'msg.payload'\nvar input = msg.payload;\n\n// Parse the JSON data\nvar jsonData = JSON.parse(input);\n\n// Create an array of values for 'Plate' and 'Type'\nvar values = jsonData.data.map(function (entry) {\n    return [entry.plate, entry.type, entry.time, entry.speed, entry.direction];\n});\n\n// Filter out existing records from the values array\nvalues = values.filter(function (value) {\n    // Check if the plate already exists in the database\n    var existingPlate = global.get('existingPlates') || [];\n    if (!existingPlate.includes(value[0])) {\n        existingPlate.push(value[0]);\n        global.set('existingPlates', existingPlate);\n        return true;\n    }\n    return false;\n});\n\n// If there are new records to insert, proceed with the insertion\nif (values.length > 0) {\n    // Insert the data into the MySQL database\n    var query = \"INSERT INTO lprdata (plate, type, entrytime, speed, direction) VALUES ?\";\n    flow.set('insertQuery', query); // Save the query in the flow context\n\n    msg.payload = values;\n\n    // Pass the message to the next node (MySQL node)\n    return msg;\n} else {\n    // No new records to insert, stop the flow\n    return null;\n}\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 130,
+        "y": 180,
+        "wires": [
+            [
+                "847879db2271c1f6"
+            ]
+        ]
+    },
+    {
+        "id": "411d7bc99a12dfbf",
+        "type": "inject",
+        "z": "59edf4acb546d11c",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 100,
+        "y": 280,
+        "wires": [
+            [
+                "c67995fbf71d1ca4",
+                "2e1f6c0f6aefb0df",
+                "0d52a3023104c3bd",
+                "4decdc1dbe90b92f",
+                "2aadb392f762b284",
+                "cbd3aa59038970f8"
+            ]
+        ]
+    },
+    {
+        "id": "4decdc1dbe90b92f",
+        "type": "function",
+        "z": "59edf4acb546d11c",
+        "name": "plate count",
+        "func": "msg.topic = \"SELECT COUNT(plate) AS plate_count FROM lprdata\";\n\nreturn msg;\n\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 330,
+        "y": 260,
+        "wires": [
+            [
+                "1407088267c9d221"
+            ]
+        ]
+    },
+    {
+        "id": "0d52a3023104c3bd",
+        "type": "function",
+        "z": "59edf4acb546d11c",
+        "name": "Avg speed",
+        "func": "msg.topic = \"SELECT AVG(speed) AS avg_speed FROM lprdata\";\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 330,
+        "y": 340,
+        "wires": [
+            [
+                "1407088267c9d221"
+            ]
+        ]
+    },
+    {
+        "id": "2aadb392f762b284",
+        "type": "function",
+        "z": "59edf4acb546d11c",
+        "name": "employee count",
+        "func": "msg.topic = \"SELECT COUNT(type) AS employeeCount FROM lprdata WHERE type = 2\";\nreturn msg;\n\n\n\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 400,
+        "wires": [
+            [
+                "1407088267c9d221"
+            ]
+        ]
+    },
+    {
+        "id": "cbd3aa59038970f8",
+        "type": "function",
+        "z": "59edf4acb546d11c",
+        "name": "Visitor Count",
+        "func": "msg.topic = \"SELECT COUNT(type) AS visiorCount FROM lprdata WHERE type = 3\";\nreturn msg;\n\n\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 330,
+        "y": 460,
+        "wires": [
+            [
+                "1407088267c9d221"
+            ]
+        ]
+    },
+    {
+        "id": "c67995fbf71d1ca4",
+        "type": "function",
+        "z": "59edf4acb546d11c",
+        "name": "Over Speed",
+        "func": "msg.topic = \"SELECT entrytime, plate, speed FROM lprdata WHERE speed > 35\";\nreturn msg;\n\n\n\n\n\n\n\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 330,
+        "y": 520,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "2e1f6c0f6aefb0df",
+        "type": "function",
+        "z": "59edf4acb546d11c",
+        "name": "Peak hour",
+        "func": "// Assuming the timestamp column in your database is named 'timestamp'\n// The query retrieves the hour from the timestamp, converts it to 12-hour format, and counts the occurrences for each hour\nvar query = \"SELECT DATE_FORMAT(entrytime, '%h %p') as hour, COUNT(*) as count FROM lprdata GROUP BY hour ORDER BY count DESC LIMIT 1\";\n\n// Set the query in msg.topic\nmsg.topic = query;\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 330,
+        "y": 580,
+        "wires": [
+            [
+                "1407088267c9d221"
+            ]
+        ]
+    },
+    {
+        "id": "1dca1aeb305f6aba",
+        "type": "http request",
+        "z": "59edf4acb546d11c",
+        "name": "Call API",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [
+            {
+                "keyType": "Content-Type",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            },
+            {
+                "keyType": "Authorization",
+                "keyValue": "",
+                "valueType": "other",
+                "valueValue": "Bearer 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"
+            }
+        ],
+        "x": 460,
+        "y": 660,
+        "wires": [
+            [
+                "28363d80802ad050"
+            ]
+        ]
+    },
+    {
+        "id": "e068e216dacf2818",
+        "type": "inject",
+        "z": "59edf4acb546d11c",
+        "name": "Question",
+        "props": [
+            {
+                "p": "question",
+                "v": "what is todays plate count",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 100,
+        "y": 660,
+        "wires": [
+            [
+                "e4c531b338e91e32"
+            ]
+        ]
+    },
+    {
+        "id": "e4c531b338e91e32",
+        "type": "function",
+        "z": "59edf4acb546d11c",
+        "name": "format payload",
+        "func": "msg.payload = {\n    \"model\": \"gpt-3.5-turbo\",\n    \"messages\": [{ \"role\": \"user\", \"content\": msg.question + \"in sqldatabase i have lprdata table with plate column having number plate details, type column having 2 or 3 where 2 means employee and 3 means visitor, entrytime column which is timestamp, speed column having speed of vehicle, direction column having 0 or 2 where 2 means forward direction 0 means reverse direction.Give me SQL query to achieve this.\" }],\n    \"temperature\": 0.8\n}\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 280,
+        "y": 660,
+        "wires": [
+            [
+                "1dca1aeb305f6aba"
+            ]
+        ]
+    },
+    {
+        "id": "28363d80802ad050",
+        "type": "function",
+        "z": "59edf4acb546d11c",
+        "name": "function 11",
+        "func": "// Assuming msg.payload contains the GPT-3.5 Turbo response\nconst gptResponse = msg.payload;\n\n// Check if the response has choices and is not empty\nif (gptResponse && gptResponse.choices && gptResponse.choices.length > 0) {\n    // Extract the content from the first choice\n    const content = gptResponse.choices[0].message.content;\n\n    // Set the content as the new payload\n    msg.payload = content;\n} else {\n    // Handle the case where the response is not as expected\n    msg.payload = \"Error: Invalid GPT-3.5 Turbo response\";\n}\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 650,
+        "y": 660,
+        "wires": [
+            [
+                "4a37a0e4bb835a2c"
+            ]
+        ]
+    },
+    {
+        "id": "4a37a0e4bb835a2c",
+        "type": "function",
+        "z": "59edf4acb546d11c",
+        "name": "function 12",
+        "func": "var inputText = msg.payload; // Assuming the output text is in msg.payload\nvar regex = /```sql([\\s\\S]+?)```/; // Regular expression to match SQL code inside ``` ```\n\nvar match = inputText.match(regex);\n\nif (match && match[1]) {\n    var sqlQuery = match[1].trim();\n    msg.payload = sqlQuery;\n    return msg;\n} else {\n    // Handle the case where no SQL query is found\n    return null; // or handle accordingly\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 130,
+        "y": 740,
+        "wires": [
+            [
+                "d80ad545dfc2bbdd"
+            ]
+        ]
+    },
+    {
+        "id": "d80ad545dfc2bbdd",
+        "type": "function",
+        "z": "59edf4acb546d11c",
+        "name": "function 13",
+        "func": "msg.topic = msg.payload;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 310,
+        "y": 740,
+        "wires": [
+            [
+                "a91816ecbf688c55"
+            ]
+        ]
+    },
+    {
+        "id": "a91816ecbf688c55",
+        "type": "mysql",
+        "z": "59edf4acb546d11c",
+        "mydb": "2f09c5ffd15b4af3",
+        "name": "",
+        "x": 480,
+        "y": 740,
+        "wires": [
+            [
+                "b4a07b7fe13f914b"
+            ]
+        ]
+    },
+    {
+        "id": "b4a07b7fe13f914b",
+        "type": "debug",
+        "z": "59edf4acb546d11c",
+        "name": "debug 6",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "1407088267c9d221",
+        "type": "mysql",
+        "z": "59edf4acb546d11c",
+        "mydb": "2f09c5ffd15b4af3",
+        "name": "",
+        "x": 560,
+        "y": 400,
+        "wires": [
+            [
+                "c497e2037273ffd1"
+            ]
+        ]
+    },
+    {
+        "id": "d81aa8bc.35b81",
+        "type": "ui_template",
+        "z": "59edf4acb546d11c",
+        "group": "339d0edc.4ffe02",
+        "name": "Node-Red Dashboard Custom CSS",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "format": "<style>\nroot, a, button, p, div {\n    -webkit-user-select: none !important;\n}\n\nbody {\n    background: -webkit-linear-gradient(\n    55deg,\n    #009785 0%,\n    #245aa5 50%,\n    #b800e9 100%\n    );\n    -webkit-touch-callout: none !important;\n}\n\nbody.nr-dashboard-theme md-toolbar,\nbody.nr-dashboard-theme md-content md-card {\n    background-color: transparent !important;\n    color: #FFFFFF;\n}\n\nui-card-panel {\n    background-color: rgba(255,255,255,0.1) !important;\n    border-radius: 10px !important;\n}\n    \n#Homey_Dashboard_Navigation {\n    background-color: transparent !important;\n    border-radius: 10px !important;\n}\n\n.md-card.md-default-theme, md-card {\n    border-radius: 10px;\n}\n\n.nr-dashboard-switch.ng-scope {\n    background-color: rgba(255,255,255,.2) !important;\n}\n\n.nr-dashboard-switch.ng-scope:hover {\n    background-color: rgba(255,255,255,.5) !important;\n}\n\n.nr-dashboard-theme .nr-dashboard-button .md-button {\n    background-color: rgba(255,255,255,.2);\n}\n\n.md-button {\n    border-radius: 10px;\n}\n\n.nr-dashboard-cardpanel layout-column {\n    background-color: rgba(255,255,255,0.2) !important;\n    background-color: transparent !important;\n    border-radius: 10px !important;\n}\n\n.nr-dashboard-theme ui-card-panel {\n    border: none;\n}\n\n.nr-dashboard-template {\n    overflow-y: visible;\n}\n.nr-dashboard-theme md-content md-card {\n    background-color: transparent !important;\n}\n\n.nr-dashboard-theme ui-card-panel p.nr-dashboard-cardtitle {\n    color: rgba(255, 255, 255, 0.5);\n}\n</style>\n\n<script>\ndocument.ontouchmove = function (e) {\n    e.preventDefault();\n}\n</script>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": false,
+        "templateScope": "global",
+        "className": "",
+        "x": 480,
+        "y": 920,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "10c9fc07a8560684",
+        "type": "ui_template",
+        "z": "59edf4acb546d11c",
+        "group": "09d357b8d6cb2038",
+        "name": "",
+        "order": 10,
+        "width": 0,
+        "height": 0,
+        "format": "\n<div style=\"background: linear-gradient(to right, #87CEEB, #5F9EA0); border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); padding: 20px; text-align: center;\">\n\n    <div style=\"font-size: 36px; color: #fff; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);\">\n        {{msg.payload[0].hour}}\n         <div style=\"font-size: 36px; color: #fff; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);\">\n        {{msg.payload[0].count}}\n\n",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 840,
+        "y": 580,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a0eeb22b84805d99",
+        "type": "ui_template",
+        "z": "59edf4acb546d11c",
+        "group": "09d357b8d6cb2038",
+        "name": "",
+        "order": 1,
+        "width": 5,
+        "height": 9,
+        "format": "\n<div style=\"background: linear-gradient(to right, #87CEEB, #5F9EA0); border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); padding: 20px; text-align: center;\">\n    <h2 style=\"font-size: 25px; background: linear-gradient(to right, #87CEEB, #5F9EA0);text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);\">plate_count</h2>\n    <div style=\"font-size: 36px; color: #fff; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);\">\n        {{msg.payload[0].plate_count}}\n\n",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 820,
+        "y": 180,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "24f08f16f2293552",
+        "type": "http request",
+        "z": "59edf4acb546d11c",
+        "name": "",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://127.0.0.1:3000/update-dashboard",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 990,
+        "y": 340,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c497e2037273ffd1",
+        "type": "join",
+        "z": "59edf4acb546d11c",
+        "name": "",
+        "mode": "custom",
+        "build": "array",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "",
+        "count": "5",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 750,
+        "y": 400,
+        "wires": [
+            [
+                "effa6a70214bf152",
+                "24f08f16f2293552"
+            ]
+        ]
+    },
+    {
+        "id": "627f2c73e8b4e141",
+        "type": "debug",
+        "z": "59edf4acb546d11c",
+        "name": "debug 7",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1140,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "420e9b1d89080df0",
+        "type": "function",
+        "z": "59edf4acb546d11c",
+        "name": "function 14",
+        "func": "// Extract values from the incoming message\nvar avgSpeed = msg.payload[0].avg_speed;\nvar peakHour = msg.payload[1][0];\nvar plateCount = msg.payload[2].plate_count;\nvar employeeCount = msg.payload[3].employeeCount;\nvar visitorCount = msg.payload[4].visiorCount;\n\n// Create the formatted output array\nvar formattedOutput = [\n    { \"avg_speed\": avgSpeed },\n    { \"hour\": peakHour.hour, \"count\": peakHour.count },\n    { \"plate_count\": plateCount },\n    { \"employeeCount\": employeeCount },\n    { \"visitorCount\": visitorCount }\n];\n\n// Set the formatted output in the message payload\nmsg.payload = formattedOutput;\n\n// Return the message\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 950,
+        "y": 400,
+        "wires": [
+            [
+                "627f2c73e8b4e141"
+            ]
+        ]
+    },
+    {
+        "id": "effa6a70214bf152",
+        "type": "debug",
+        "z": "59edf4acb546d11c",
+        "name": "debug 8",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 900,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "6bca8075c34d881e",
+        "type": "ui_spacer",
+        "z": "59edf4acb546d11c",
+        "name": "spacer",
+        "group": "09d357b8d6cb2038",
+        "order": 2,
+        "width": 11,
+        "height": 1
+    },
+    {
+        "id": "5f607a39800af115",
+        "type": "ui_spacer",
+        "z": "59edf4acb546d11c",
+        "name": "spacer",
+        "group": "09d357b8d6cb2038",
+        "order": 3,
+        "width": 11,
+        "height": 1
+    },
+    {
+        "id": "6c2dd7ae93d71a59",
+        "type": "ui_spacer",
+        "z": "59edf4acb546d11c",
+        "name": "spacer",
+        "group": "09d357b8d6cb2038",
+        "order": 4,
+        "width": 11,
+        "height": 1
+    },
+    {
+        "id": "441ce91f0a36b46c",
+        "type": "ui_spacer",
+        "z": "59edf4acb546d11c",
+        "name": "spacer",
+        "group": "09d357b8d6cb2038",
+        "order": 5,
+        "width": 11,
+        "height": 1
+    },
+    {
+        "id": "c6ca04959bc11351",
+        "type": "ui_spacer",
+        "z": "59edf4acb546d11c",
+        "name": "spacer",
+        "group": "09d357b8d6cb2038",
+        "order": 6,
+        "width": 11,
+        "height": 1
+    },
+    {
+        "id": "1ec393761a55beb2",
+        "type": "ui_spacer",
+        "z": "59edf4acb546d11c",
+        "name": "spacer",
+        "group": "09d357b8d6cb2038",
+        "order": 7,
+        "width": 11,
+        "height": 1
+    },
+    {
+        "id": "e51d5c7fe1364086",
+        "type": "ui_spacer",
+        "z": "59edf4acb546d11c",
+        "name": "spacer",
+        "group": "09d357b8d6cb2038",
+        "order": 8,
+        "width": 11,
+        "height": 1
+    },
+    {
+        "id": "6fcb9a9b0eb68570",
+        "type": "ui_spacer",
+        "z": "59edf4acb546d11c",
+        "name": "spacer",
+        "group": "09d357b8d6cb2038",
+        "order": 9,
+        "width": 11,
+        "height": 1
+    },
+    {
+        "id": "15a40d83fd89d506",
+        "type": "ui_spacer",
+        "z": "59edf4acb546d11c",
+        "name": "spacer",
+        "group": "09d357b8d6cb2038",
+        "order": 10,
+        "width": 11,
+        "height": 1
+    },
+    {
+        "id": "2f09c5ffd15b4af3",
+        "type": "MySQLdatabase",
+        "name": "pavandb",
+        "host": "localhost",
+        "port": "3306",
+        "db": "pavandb",
+        "tz": "",
+        "charset": "UTF8"
+    },
+    {
+        "id": "339d0edc.4ffe02",
+        "type": "ui_group",
+        "name": "Heure",
+        "tab": "a2490d0e.a872b",
+        "order": 1,
+        "disp": false,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "09d357b8d6cb2038",
+        "type": "ui_group",
+        "name": "",
+        "tab": "81128d6dbb91b547",
+        "order": 1,
+        "disp": true,
+        "width": 16,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "a2490d0e.a872b",
+        "type": "ui_tab",
+        "name": "Homey Dashboard",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "81128d6dbb91b547",
+        "type": "ui_tab",
+        "name": "Dashboard",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]

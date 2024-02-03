@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Node-RED Trigger</title>
+</head>
+<body>
+    <button onclick="triggerFlow()">Trigger Flow</button>
+    <script>
+        function triggerFlow() {
+            // Use JavaScript to send a POST request to the Node-RED server
+            fetch('http://127.0.0.1:1880/trigger-flow', { method: 'GET' });
+        }
+    </script>
+</body>
+</html>

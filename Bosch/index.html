@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <style>
+
+@import url('https://fonts.googleapis.com/css2?family=Yeseva+One&display=swap');
+
+* {
+      font-family: 'Yeseva One', cursive;
+    }
+
+           root, a, button, p, div {
+                -webkit-user-select: none !important;
+            }
+            
+            body {
+                background: #183358;
+                -webkit-touch-callout: none !important;
+            }
+            /* 009785 */
+            body.nr-dashboard-theme md-toolbar,
+            body.nr-dashboard-theme md-content md-card {
+                background-color: transparent !important;
+                color: #FFFFFF;
+            }
+
+        .container-fluid {
+            padding-top: 5px;
+            
+        
+        }
+
+        .card {
+            background-color: #082a5c !important;
+            border-radius: 20px !important;
+            box-shadow: 0 7px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .navbar {
+            background-color: #023565;
+            border: white;
+            
+        }
+
+        .navbar-brand {
+            
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .navbar-toggler-icon {
+            background-color: #fff;
+        }
+
+        .navbar-nav .nav-link {
+            color: #fff;
+        }
+        .test{
+            padding-top: 380px;
+        }
+        .form-control me-2{
+            color: black;
+        
+        }
+        .space{
+            padding-top: 40px;
+        }
+        .graphBox
+        {
+            position: relative;
+            width: 100%;
+            height:100%;
+            padding-top: 5px;
+            display: grid;
+            grid-template-columns: 1fr 2.5fr;
+            grid-gap: 30px;
+            min-height: 200px;
+        }
+        .graphBox .box{
+            position: relative;
+            
+            padding: 20px;
+            width: 100%;
+            box-shadow: 0 7px 30px rgba(0, 0, 0, 0.5);
+            
+            border-radius: 20px;
+            height: 380px;
+
+
+        }
+        .skill{
+            position: relative;
+            width: 90%;
+            height:90%;
+            padding-top: 5px;
+            display: flex;
+            justify-content: center;
+            /* grid-template-columns: 1fr ; */
+            grid-gap: 30px;
+            min-height: 200px;
+           
+        }
+        .fawaz{
+            position: relative;
+            margin-top: 30px;
+            
+            
+            padding: 20px;
+            width: 30%;
+            box-shadow: 0 7px 30px rgba(0, 0, 0, 0.5);
+            
+            border-radius: 20px;
+            height: 380px;
+
+        }
+        .outer {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            height: 160px;
+            width: 160px;
+            border-radius: 50%;
+            /* border: 1px solid red; */
+            padding: 20px;
+            box-shadow: 6px 6px 10px -1px rgba(0,0,0,0.15),
+            -6px -6px 10px -1px rgba(255,255,255,0.7)
+        }
+        .inner{
+            height: 120px;
+            width: 120px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 4px 4px 6px -1px rgba(0,0,0,0.2),
+            inset -4px -4px 6px -1px rgba(255,255,255,0.7),
+            -0.5px -0.5px 0px rgba(255,255,255,1),
+            -0.5px -0.5px 0px rgba(255,255,255,0.15),
+            0px 12px 10px -10px rgba(0, 0, 0, 0.05);
+        }
+        #number{
+            font-size:large;
+            font-weight: 600;
+            color: #f8f4f4;
+        }
+        circle{
+            fill:none;
+            stroke: url(#GradientColor);
+            stroke-width:20px ;
+            stroke-dasharray: 472;
+            stroke-dashoffset:472;
+            animation: anim 2s linear forwards;
+        }
+        svg{
+            position: absolute;
+            top: 6.9rem;
+            left: 7.5625rem;
+        }
+        @keyframes anim 
+        {
+            100%{
+                stroke-dashoffset: 165;
+            }
+            
+        }
+        :root {
+    --background-light: #fff;
+    --background-dark: #121212;
+    --text-light: #000;
+    --text-dark: #fff;
+    /* Add other variables as needed */
+  }
+
+  
+  /* Dark mode styles */
+  body.dark-mode {
+    background: var(--background-dark);
+    color: var(--text-dark);
+    /* Add other dark mode styles as needed */
+  }
+
+  body.light-mode {
+    background: #fff; 
+    color: red !important; 
+}
+
+
+    /* Initially hide the iframe */
+    #nodeRedIframe {
+      display: none;
+    }
+ 
+
+
+    </style>
+</head>
+
+<body>
+
+        <nav class="navbar navbar-expand-lg navbar-dark border">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Dashboard</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo03"
+                aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+             
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="http://127.0.0.1:1880/trigger-flow">Report</a>   
+                    </li>
+                </ul>
+                <!-- <form class="d-flex" role="search">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form> -->
+                <button id="toggleModeBtn" class="btn btn-outline-light"> Mode</button>
+                <!-- <button class="btn btn-outline-light" onclick="toggleNodeRed()" > Configuaration </button>
+                <iframe id="nodeRedIframe" src="http://127.0.0.1:1880/" width="800" height="700" style="border:none;"></iframe> -->
+                
+                  
+            </div>
+        </div>
+    </nav>
+    <div class="space"></div>
+
+    <div class="container-fluid">
+        <div class="row row-cols-1 row-cols-md-3 g-5">
+            <!-- <div class="col">
+                <div class="card h-100 border-light text-bg-dark mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Total IN</h5>
+                        <p class="card-text"><span id="totalINId">Loading...</span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100 border-light text-bg-dark mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Total OUT</h5>
+                        <p class="card-text"><span id="totalOUTId">Loading...</span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100 border-light text-bg-dark mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">occupancy</h5>
+                        <p class="card-text"><span id="occupancyId">Loading...</span></p>
+                    </div>
+                </div>
+            </div> -->
+            
+            <div class="col">
+                <div class="card h-100 border-ligh text-bg-dark mb-3" onclick="toggleFullScreen()">
+                    <div class="card-body" style="padding-bottom: -0px;"> <!-- Adjusted padding -->
+                        <h5 class="card-title" style="font-size: 20px; margin-bottom: -5px;">IN</h5>
+                        <p class="card-text" style="margin-bottom: 0;">
+                            <img id="fullScreenImage" src="inimg.png" alt="IN Image" height="180" width="150" style="margin-bottom: -30px; margin-top: -4px; margin-left: -40px;"> <!-- Adjusted margin -->
+                            <span id="TodayINId" style="font-size: 70px; padding-left: 90px; margin-top: 60px;">....</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <script>
+                function toggleFullScreen() {
+                    // Get the card element
+                    var card = document.querySelector('.card');
+            
+                    // Check if the card is in full-screen mode
+                    var isFullScreen = document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement;
+                    
+                    if (!isFullScreen) {
+                        // If not in full screen, enter full screen
+                        if (card.requestFullscreen) {
+                            card.requestFullscreen();
+                        } else if (card.mozRequestFullScreen) { /* Firefox */
+                            card.mozRequestFullScreen();
+                        } else if (card.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+                            card.webkitRequestFullscreen();
+                        } else if (card.msRequestFullscreen) { /* IE/Edge */
+                            card.msRequestFullscreen();
+                        }
+                    } else {
+                        // If already in full screen, exit full screen
+                        if (document.exitFullscreen) {
+                            document.exitFullscreen();
+                        } else if (document.mozCancelFullScreen) { /* Firefox */
+                            document.mozCancelFullScreen();
+                        } else if (document.webkitExitFullscreen) { /* Chrome, Safari and Opera */
+                            document.webkitExitFullscreen();
+                        } else if (document.msExitFullscreen) { /* IE/Edge */
+                            document.msExitFullscreen();
+                        }
+                    }
+            
+                    // Get the image and text elements
+                    var image = document.getElementById('fullScreenImage');
+                    var text = document.getElementById('TodayINId');
+            
+                    // Toggle styles for full-screen mode
+                    if (!isFullScreen) {
+                        // Adjust the styles for full-screen mode
+                        image.style.height = '500px'; // Adjust the desired height
+                        image.style.width = '450px';  // Adjust the desired width
+                        text.style.fontSize = '320px'; // Adjust the desired font size
+            
+                        // Center the elements horizontally and vertically
+                        image.style.margin = 'auto';
+                        text.style.position = 'absolute';
+                        text.style.top = '50%';
+                        text.style.left = '50%';
+                        text.style.transform = 'translate(-50%, -50%)';
+                    } else {
+                        // Restore the styles when exiting full-screen mode
+                        image.style.height = '180px';
+                        image.style.width = '150px';
+                        text.style.fontSize = '70px';
+                        image.style.margin = '';
+                        text.style.position = '';
+                        text.style.top = '';
+                        text.style.left = '';
+                        text.style.transform = '';
+                    }
+                }
+            </script>
+            
+
+            <div class="col">
+                <div class="card h-100 border-ligh text-bg-dark mb-3">
+                    <div class="card-body" style="padding-bottom: -0px;">
+                        <h5 class="card-title" style="font-size: 20px; margin-bottom: -5px;">OUT</h5>
+                        <p class="card-text" style="margin-bottom: 0;">
+                            <img src="./outimg.png" alt="IN Image" height="190" width="160" style="margin-bottom: -30px; margin-top: -4px; margin-left: -50px;">
+                            <span id="todayOUTId" style="font-size: 70px;margin-top: 60px; padding-left: 90px;">....</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card h-100 border-ligh text-bg-dark mb-3">
+                    <div class="card-body" style="padding-bottom: -0px;"> <!-- Adjusted padding -->
+                        <h5 class="card-title" style="font-size: 20px; margin-bottom: -5px;">Current OCCUPANCY</h5>
+                        <p class="card-text" style="margin-bottom: 0;">
+                            <img src="occupimg.png" alt="IN Image" height="180" width="150" style="margin-bottom: -30px; margin-top: -4px;"> <!-- Adjusted margin -->
+                            <span id="CountId" style="font-size: 70px; padding-left: 90px; margin-top: 60px;" >....</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card h-100 border-ligh text-bg-dark mb-3">
+                    <div class="card-body" style="padding-bottom: -0px;">
+                        <h5 class="card-title" style="font-size: 20px; margin-bottom: -5px;">BIKE</h5>
+                        <p class="card-text" style="margin-bottom: 0;">
+                            <img src="./bike.png" alt="IN Image" height="170" width="140" style="margin-bottom: -30px; margin-top: -4px; ">
+                            <span id="total2WId" style="font-size: 70px;margin-top: 60px; padding-left: 90px;">....</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card h-100 border-ligh text-bg-dark mb-3">
+                    <div class="card-body" style="padding-bottom: -0px;">
+                        <h5 class="card-title" style="font-size: 20px; margin-bottom: -5px;">CAR</h5>
+                        <p class="card-text" style="margin-bottom: 0;">
+                            <img src="car.png" alt="IN Image" height="220" width="190" style="margin-bottom: -30px; margin-top: -15px;">
+                            <span id="totalCARId" style="font-size: 70px; padding-left: 90px;">....</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card h-100 border-ligh text-bg-dark mb-3">
+                    <div class="card-body" style="padding-bottom: -0px;">
+                        <h5 class="card-title" style="font-size: 20px; margin-bottom: -5px;">TRUCK</h5>
+                        <p class="card-text" style="margin-bottom: 0;">
+                            <img src="truck.png" alt="IN Image" height="180" width="180" style="margin-bottom: -30px; margin-top: -15px;">
+                            <span id="totalTruckId" style="font-size: 70px; padding-left: 90px;">....</span></p>
+                        </div>
+                    </div>
+                </div>
+
+           <div class="col">
+            <div class="card h-100 border-ligh text-bg-dark mb-3">
+                <div class="card-body" style="padding-bottom: -0px;">
+                    <h5 class="card-title" style="font-size: 20px; margin-bottom: -5px;">OCCUPANCY</h5>
+                    <p class="card-text" style="margin-bottom: 0;">
+                        <img src="occuimg.png" alt="IN Image" height="190" width="160" style="margin-bottom: -30px; margin-top: -15px;">
+                        <span id="todayoccupancyId" style="font-size: 70px; padding-left: 90px;">....</span></p>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="col">
+                <div class="card h-100 border-ligh text-bg-dark mb-3">
+                    <div class="card-body" style="padding-bottom: -0px;">
+                        <h5 class="card-title" style="font-size: 20px; margin-bottom: -5px;">FLOORS</h5>
+                        <div class="d-flex align-items-center justify-content-between"> <!-- Use flex container with justify-content-between to align elements horizontally and push them to the right -->
+                            <!-- <img src="floorimg.png" alt="peak Image" height="190" width="160" style="margin-bottom: -30px; margin-top: -30px; margin-left: -30px;">
+                            <div class="ml-3"> <!-- Add margin to separate the image from text -->
+                                <!-- <p class="card-text"  style="font-size: 20px; ">
+                                    Floor 1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IN <span id="floorINId"></span> &nbsp;&nbsp;OUT <span id="floorOUTId">Loading...</span>
+                                </p>
+                                <p class="card-text"  style="font-size: 20px;">
+                                    Floor 2 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IN <span id="floor2INId"></span> &nbsp;&nbsp;OUT <span id="floor2OUTId">Loading...</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                </div>
+            </div>              
+            <!-- <div class="col">
+                <div class="card h-100 border-ligh text-bg-dark mb-3">
+                    <div class="card-body" style="padding-bottom: -0px;">
+                        <h5 class="card-title" style="font-size: 20px; margin-bottom: -5px;">BUSY FLOOR</h5>
+                        <div class="d-flex align-items-center"> <!-- Use a flex container to align elements horizontally -->
+                            <!-- <img src="busycam.png" alt="peak Image" height="200" width="160" style="margin-bottom: -30px; margin-top: -30px; margin-left: -23px;">
+                            <div class="ml-3"> <!-- Add margin to separate the image from text -->
+                                <!-- <p class="card-text">
+                                    <span class="card-text" style="font-size: 20px;">Floor: <span id="camId">Loading...</span></span>
+                                </p>
+                                <p class="card-text">
+                                    <span class="card-text" style="font-size: 20px;">Events: <span id="eventCountId">Loading...</span></span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> --> 
+             
+            <div class="col">
+                <div class="card h-100 border-ligh text-bg-dark mb-3">
+                    <div class="card-body" style="padding-bottom: -0px;">
+                        <h5 class="card-title" style="font-size: 20px; margin-bottom: -5px;">PEAK HOUR</h5>
+                        <div class="d-flex align-items-center"> <!-- Use a flex container to align elements horizontally -->
+                            <img src="peakimg.png" alt="peak Image" height="140" width="130" style="margin-bottom: -30px; margin-top: 10px; ">
+                            <div class="ml-3"> <!-- Add margin to separate the image from text -->
+                                <p class="card-text">
+                                    <span class="card-text" style="font-size: 20px;">Peak Hour: <span id="peakHourId">Loading...</span></span>
+                                </p>
+                                <p class="card-text">
+                                    <span class="card-text" style="font-size: 20px;">Peak Count: <span id="peakCountId">Loading...</span></span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+            
+            <!-- Add this card section after the existing cards -->
+            <div class="col">
+                <div class="card h-100 border-ligh text-bg-dark mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">How can i help you?</h5>
+                        <img src="AI.png" alt="peak Image" height="140" width="130" style="margin-bottom: -30px; margin-top: 10px; ">
+                        <div class="d-flex flex-column align-items-center">
+                            <form id="questionForm">
+                                <input type="text" style="margin-left: 12rem; margin-top: -6rem;" id="question" name="question" required>
+                                <button type="submit" style="border-radius: 120px; margin-left: 19rem;" class="btn btn-primary mt-2">Submit</button>
+                            </form>
+                            <div id="qaResult" class="mt-3"></div>
+                            <div id="qaLoading" style="display: none;">Loading...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <br>
+        <br>
+         <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+        <div class="graphBox">
+        
+            <div class="box">
+                <canvas id="chart1" width="400" height="400"></canvas>
+            </div>
+            <div class="box">
+                <canvas id="chart2" width="1180" height="400"></canvas>
+                
+            </div>
+        </div>
+        <div class="skill">
+           <div class="fawaz" style="font-size:30px; padding-left:110px; color: white;">OCCUPANCY
+           <div class="outer">
+            
+           <div class="inner">
+            <div id="number"></div>
+           </div>
+        </div>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="160px" height="160px">
+            <defs>
+               <linearGradient id="GradientColor">
+                  <stop offset="0%" stop-color="#e91e63" />
+                  <stop offset="100%" stop-color="#673ab7" />
+               </linearGradient>
+            </defs>
+            <circle cx="80" cy="80" r="70" stroke-linecap="round" />
+    </svg> -->
+
+    
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+       
+    </div>
+           
+            
+
+        </div>
+        <script>
+            let number= document.getElementById("number");
+            let counter= 0;
+            setInterval(()=>{
+                if(counter==65){clearInterval();}
+                else{
+                counter+=1;
+                number.innerHTML =counter +"%";
+                }
+            },30);
+        </script>
+    
+        
+    </div>
+</div>
+    </div>
+
+    
+    
+
+    <!-- Include Socket.io library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="chart1.js"></script>
+    <script>
+        // Connect to the Socket.io server
+        const socket = io();
+
+        // Listen for updates from the server
+        socket.on('updateTotalIN', (totalIN) => {
+             document.getElementById('totalINId').innerText = totalIN;
+        });
+
+        socket.on('updateTotalOUT', (totalOUT) => {
+           document.getElementById('totalOUTId').innerText = totalOUT;
+        });
+
+        socket.on('updateOccupancy', (occupancy) => {
+           document.getElementById('occupancyId').innerText = occupancy;
+        });
+
+        socket.on('updatetodayoccupancy', (todayoccupancy) => {
+           document.getElementById('todayoccupancyId').innerText = todayoccupancy;
+        });
+
+        socket.on('updatePeakHour', (peakHour) => {
+           document.getElementById('peakHourId').innerText = peakHour;
+        });
+
+        socket.on('updateTodayIN', (TodayIN) => {
+           document.getElementById('TodayINId').innerText = TodayIN;
+        });
+        
+        socket.on('updatetodayOUT', (todayOUT) => {
+           document.getElementById('todayOUTId').innerText = todayOUT;
+        });
+
+        socket.on('updatefloorIN', (floorIN) => {
+           document.getElementById('floorINId').innerText = floorIN;
+        });
+        socket.on('updatefloorOUT', (floorOUT) => {
+           document.getElementById('floorOUTId').innerText = floorOUT;
+        });
+
+        socket.on('updatefloor2IN', (floor2IN) => {
+           document.getElementById('floor2INId').innerText = floor2IN;
+        });
+
+        socket.on('updatefloor2OUT', (floor2OUT) => {
+           document.getElementById('floor2OUTId').innerText = floor2OUT;
+        });
+
+        socket.on('updatecam', (cam) => {
+           document.getElementById('camId').innerText = cam;
+        });
+
+        socket.on('updateeventCount', (eventCount) => {
+           document.getElementById('eventCountId').innerText = eventCount;
+        });
+
+         socket.on('updatepeakCount', (peakCount) => {
+           document.getElementById('peakCountId').innerText = peakCount;
+        });
+
+        socket.on('updateCount', (Count) => {
+            console.log(Count);
+           document.getElementById('CountId').innerText = Count;
+        });
+
+        socket.on('updatetotal2W', (total2W) => {
+            console.log(total2W);
+           document.getElementById('total2WId').innerText = total2W;
+        });
+ 
+        socket.on('updatetotalCAR', (totalCAR) => {
+           document.getElementById('totalCARId').innerText = totalCAR;
+        });
+
+        socket.on('updatetotalTruck', (totalTruck) => {
+           document.getElementById('totalTruckId').innerText = totalTruck;
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+
+        <script>
+           document.addEventListener('DOMContentLoaded', function () {
+        const body = document.body;
+        const toggleModeBtn = document.getElementById('toggleModeBtn');
+
+        toggleModeBtn.addEventListener('click', function () {
+            if (body.classList.contains('dark-mode')) {
+                body.classList.remove('dark-mode');
+                body.classList.add('light-mode');
+            } else if (body.classList.contains('light-mode')) {
+                body.classList.remove('light-mode');
+            } else {
+                body.classList.add('dark-mode');
+            }
+        });
+    });
+          </script>
+<!-- 
+          <script>
+            function toggleNodeRed() {
+              var nodeRedIframe = document.getElementById("nodeRedIframe");
+              if (nodeRedIframe.style.display === "none") {
+                nodeRedIframe.style.display = "block";
+              } else {
+                nodeRedIframe.style.display = "none";
+              }
+            }
+          </script> -->
+ 
+ <script>
+    document.getElementById('questionForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const question = document.getElementById('question').value;
+
+        // Show loading spinner while waiting for the response
+        document.getElementById('qaLoading').style.display = 'block';
+        document.getElementById('qaResult').innerText = '';
+
+        sendData(question);
+    });
+
+    function sendData(question) {
+        fetch('http://127.0.0.1:1880/askQuestion', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ question }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Assuming the response structure is { "output": [...] }
+            const result = data.output;
+
+            // Display the result on the website
+            document.getElementById('qaResult').innerText = JSON.stringify(result);
+        })
+        .catch(error => console.error('Error:', error))
+        .finally(() => {
+            // Hide loading spinner when the response is received
+            document.getElementById('qaLoading').style.display = 'none';
+        });
+    }
+
+    async function fetchData() {
+    // Make a simple GET request
+fetch('http://localhost:3000/fetch')
+.then(response => {
+  // Check if the request was successful (status code 200-299)
+  if (!response.ok) {
+    throw new Error(`HTTP error! Status: ${response.status}`);
+  }
+
+  // Parse the response as JSON
+  return response.json();
+})
+.then(data => {
+  // Handle the JSON data
+  console.log(data);
+})
+.catch(error => {
+  // Handle errors
+  console.error('Fetch error:', error);
+});
+
+
+  }
+
+  fetchData()
+
+</script>
+
+
+</body>
+
+</html>

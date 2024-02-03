@@ -1,0 +1,245 @@
+[
+    {
+        "id": "411d7bc99a12dfbf",
+        "type": "inject",
+        "z": "59edf4acb546d11c",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 100,
+        "y": 280,
+        "wires": [
+            [
+                "c67995fbf71d1ca4",
+                "2e1f6c0f6aefb0df",
+                "0d52a3023104c3bd",
+                "4decdc1dbe90b92f",
+                "2aadb392f762b284",
+                "cbd3aa59038970f8"
+            ]
+        ]
+    },
+    {
+        "id": "c67995fbf71d1ca4",
+        "type": "function",
+        "z": "59edf4acb546d11c",
+        "name": "Over Speed",
+        "func": "msg.topic = \"SELECT entrytime, plate, speed FROM lprdata WHERE speed > 35\";\nreturn msg;\n\n\n\n\n\n\n\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 330,
+        "y": 520,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "2e1f6c0f6aefb0df",
+        "type": "function",
+        "z": "59edf4acb546d11c",
+        "name": "Peak hour",
+        "func": "// Assuming the timestamp column in your database is named 'timestamp'\n// The query retrieves the hour from the timestamp, converts it to 12-hour format, and counts the occurrences for each hour\nvar query = \"SELECT DATE_FORMAT(entrytime, '%h %p') as hour, COUNT(*) as count FROM lprdata GROUP BY hour ORDER BY count DESC LIMIT 1\";\n\n// Set the query in msg.topic\nmsg.topic = query;\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 330,
+        "y": 580,
+        "wires": [
+            [
+                "1407088267c9d221"
+            ]
+        ]
+    },
+    {
+        "id": "0d52a3023104c3bd",
+        "type": "function",
+        "z": "59edf4acb546d11c",
+        "name": "Avg speed",
+        "func": "msg.topic = \"SELECT AVG(speed) AS avg_speed FROM lprdata\";\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 330,
+        "y": 340,
+        "wires": [
+            [
+                "1407088267c9d221"
+            ]
+        ]
+    },
+    {
+        "id": "4decdc1dbe90b92f",
+        "type": "function",
+        "z": "59edf4acb546d11c",
+        "name": "plate count",
+        "func": "msg.topic = \"SELECT COUNT(plate) AS plate_count FROM lprdata\";\n\nreturn msg;\n\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 330,
+        "y": 260,
+        "wires": [
+            [
+                "1407088267c9d221"
+            ]
+        ]
+    },
+    {
+        "id": "2aadb392f762b284",
+        "type": "function",
+        "z": "59edf4acb546d11c",
+        "name": "employee count",
+        "func": "msg.topic = \"SELECT COUNT(type) AS employeeCount FROM lprdata WHERE type = 2\";\nreturn msg;\n\n\n\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 400,
+        "wires": [
+            [
+                "1407088267c9d221"
+            ]
+        ]
+    },
+    {
+        "id": "cbd3aa59038970f8",
+        "type": "function",
+        "z": "59edf4acb546d11c",
+        "name": "Visitor Count",
+        "func": "msg.topic = \"SELECT COUNT(type) AS visiorCount FROM lprdata WHERE type = 3\";\nreturn msg;\n\n\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 330,
+        "y": 460,
+        "wires": [
+            [
+                "1407088267c9d221"
+            ]
+        ]
+    },
+    {
+        "id": "1407088267c9d221",
+        "type": "mysql",
+        "z": "59edf4acb546d11c",
+        "mydb": "2f09c5ffd15b4af3",
+        "name": "",
+        "x": 560,
+        "y": 400,
+        "wires": [
+            [
+                "c497e2037273ffd1"
+            ]
+        ]
+    },
+    {
+        "id": "c497e2037273ffd1",
+        "type": "join",
+        "z": "59edf4acb546d11c",
+        "name": "",
+        "mode": "custom",
+        "build": "array",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "",
+        "count": "5",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 750,
+        "y": 400,
+        "wires": [
+            [
+                "effa6a70214bf152",
+                "24f08f16f2293552"
+            ]
+        ]
+    },
+    {
+        "id": "effa6a70214bf152",
+        "type": "debug",
+        "z": "59edf4acb546d11c",
+        "name": "debug 8",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 900,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "24f08f16f2293552",
+        "type": "http request",
+        "z": "59edf4acb546d11c",
+        "name": "",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://127.0.0.1:3000/update-dashboard",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 990,
+        "y": 340,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "2f09c5ffd15b4af3",
+        "type": "MySQLdatabase",
+        "name": "pavandb",
+        "host": "localhost",
+        "port": "3306",
+        "db": "pavandb",
+        "tz": "",
+        "charset": "UTF8"
+    }
+]
