@@ -1,0 +1,139 @@
+:root {
+    --grid-gap: 15px;
+    --primary-color: #3498db;
+    --secondary-color: #2ecc71;
+    --accent-color: #e74c3c;
+    --text-color: #333;
+    --bg-color: #f2f2f2;
+  }
+  
+  /* General Styles */
+  body {
+    margin: 0;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.42857143;
+    background-color: var(--bg-color);
+  }
+  
+  a {
+    color: var(--primary-color);
+    text-decoration: none;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    color: var(--primary-color);
+  }
+  
+  /* Navbar Styles */
+  .navbar {
+    background-color: var(--primary-color);
+    color: #fff;
+  }
+  
+  .navbar-brand, .navbar-nav li a {
+    color: #fff !important;
+  }
+  
+  .navbar-toggle .icon-bar {
+    background: #fff;
+  }
+  
+  /* Grid and Container Styles */
+  .container {
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .grid {
+    display: grid;
+    grid-auto-flow: row;
+    align-items: start;
+    grid-gap: var(--grid-gap);
+  }
+  
+  .grid-hero-sidebar {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(3, auto);
+  }
+  
+  /* Dashboard Styles */
+  .keen-dashboard {
+    padding-top: 80px;
+  }
+  
+  .chart-wrapper {
+    background: #fff;
+    border: 1px solid #e2e2e2;
+    border-radius: 3px;
+    margin-bottom: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .chart-wrapper:hover {
+    transform: scale(1.02);
+  }
+  
+  .chart-title {
+    border-bottom: 1px solid #d7d7d7;
+    color: var(--primary-color);
+    font-size: 18px;
+    font-weight: 600;
+    padding: 10px;
+    background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+  }
+  
+  .chart-stage {
+    overflow: hidden;
+    padding: 20px;
+  }
+  
+  .chart-notes {
+    background: #fbfbfb;
+    border-top: 1px solid #e2e2e2;
+    color: #808080;
+    font-size: 14px;
+    padding: 10px;
+  }
+  
+  /* Button Styles */
+  .btn {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    white-space: nowrap;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+  }
+  
+  .btn-primary {
+    color: #fff;
+    background: var(--primary-color);
+  }
+  
+  .btn-primary:hover {
+    background: var(--secondary-color);
+  }
+  
+  /* Dynamic Effects */
+  .btn, .chart-wrapper, .navbar {
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .btn:hover, .btn:focus {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .chart-wrapper:hover, .navbar:hover {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
